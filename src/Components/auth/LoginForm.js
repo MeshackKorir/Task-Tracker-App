@@ -5,12 +5,21 @@ function LoginForm({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Logging in:', { email, password });
-    // If credentials are good:
+    setError('');
+    setMessage('');
+    // Get users from localStorage
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    // Check if user exists and password matches
+    const user = users.find(user => user.email === email && user.password === password);
+    if (!user) {
+      setError('Email or password invalid');
+      return;
+    }
     setMessage('Login successful!');
     setTimeout(() => {
       if (onLogin) onLogin();
@@ -58,6 +67,11 @@ function LoginForm({ onLogin }) {
       {message && (
         <div style={{ color: '#388e3c', marginTop: '1rem', fontWeight: 'bold' }}>
           {message}
+        </div>
+      )}
+      {error && (
+        <div style={{ color: '#d32f2f', marginTop: '1rem', fontWeight: 'bold' }}>
+          {error}
         </div>
       )}
     </form>

@@ -8,11 +8,19 @@ import Footer from "./Components/footer/footer";
 import Signout from "./Components/auth/signout";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem('isAuthenticated')
+  );
 
   // Handler to set authentication state
-  const handleLogin = () => setIsAuthenticated(true);
-  const handleSignout = () => setIsAuthenticated(false);
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+    localStorage.setItem('isAuthenticated', 'true');
+  };
+  const handleSignout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem('isAuthenticated');
+  };
 
   return (
     <Router>
@@ -29,21 +37,25 @@ function App() {
           marginBottom: '2rem',
           boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
         }}>
-          <Link to="/login" style={{
-            color: '#fff',
-            textDecoration: 'none',
-            margin: '0 1rem',
-            fontWeight: 'bold',
-            fontSize: '1.1rem'
-          }}>Login</Link>
-          <span style={{ color: '#fff' }}>|</span>
-          <Link to="/signup" style={{
-            color: '#fff',
-            textDecoration: 'none',
-            margin: '0 1rem',
-            fontWeight: 'bold',
-            fontSize: '1.1rem'
-          }}>Signup</Link>
+          {!isAuthenticated && (
+            <>
+              <Link to="/login" style={{
+                color: '#fff',
+                textDecoration: 'none',
+                margin: '0 1rem',
+                fontWeight: 'bold',
+                fontSize: '1.1rem'
+              }}>Login</Link>
+              <span style={{ color: '#fff' }}>|</span>
+              <Link to="/signup" style={{
+                color: '#fff',
+                textDecoration: 'none',
+                margin: '0 1rem',
+                fontWeight: 'bold',
+                fontSize: '1.1rem'
+              }}>Signup</Link>
+            </>
+          )}
           {isAuthenticated && (
             <>
               <span style={{ color: '#fff' }}>|</span>
@@ -60,9 +72,10 @@ function App() {
 
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <Routes>
+            <Route path="/" element={<Home />} />
             <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
             <Route path="/signup" element={<SignupForm />} />
-            <Route path="/home" element={<Home />} />
+            <Route path="/home" element={isAuthenticated ? <Home /> : <LoginForm onLogin={handleLogin} />} />
             <Route path="/signout" element={<Signout onSignout={handleSignout} />} />
           </Routes>
         </div>

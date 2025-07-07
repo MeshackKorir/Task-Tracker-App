@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 function SignupForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -12,6 +12,11 @@ function SignupForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
+    // Passwords must match
+    if (password !== confirmPassword) {
+      setError('Passwords do not match!');
+      return;
+    }
     // Get users from localStorage or empty array
     const users = JSON.parse(localStorage.getItem('users') || '[]');
     // Check if email already exists
@@ -56,8 +61,8 @@ function SignupForm() {
       <label>Confirm Password:</label>
       <input
         type="password"
-        value={confirm}
-        onChange={(e) => setConfirm(e.target.value)}
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
         required
       />
 
