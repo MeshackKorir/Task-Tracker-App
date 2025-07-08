@@ -16,6 +16,21 @@ function Home() {
       <p style={{ color: '#333', fontSize: '1.1rem', marginBottom: '2rem' }}>
         This app allows you to Signup and Login to track your progress.
       </p>
+      <div style={{
+        background: '#e3f2fd',
+        borderRadius: '8px',
+        padding: '1.2rem',
+        marginBottom: '2rem',
+        textAlign: 'left'
+      }}>
+        <h3 style={{ color: '#1976d2', marginTop: 0 }}>Vibe With Code Progress</h3>
+        <ol style={{ paddingLeft: '1.2rem', color: '#333', fontSize: '1rem' }}>
+          <li><strong>Week 1:</strong> Introduction</li>
+          <li><strong>Week 2:</strong> HTML and CSS</li>
+          <li><strong>Week 3:</strong> JavaScript</li>
+          <li><strong>Week 4:</strong> React</li>
+        </ol>
+      </div>
       <Link to="/login">
         <button style={{
           background: 'linear-gradient(90deg, #1976d2 60%, #42a5f5 100%)',
@@ -31,6 +46,7 @@ function Home() {
           Get Started
         </button>
       </Link>
+      {/* You can add more homepage content or features here as needed */}
     </div>
   );
 }
