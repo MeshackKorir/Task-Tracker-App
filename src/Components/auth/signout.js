@@ -5,12 +5,12 @@ function Signout({ onSignout }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Clear user session or token here if stored
-    // localStorage.removeItem('userToken');
+    
+    localStorage.removeItem('currentUserEmail');
     if (onSignout) onSignout();
     setTimeout(() => {
       navigate('/login');
-    }, 1200); // Wait 1.2 seconds before redirecting
+    }, 1200); 
   }, [navigate, onSignout]);
 
   return (

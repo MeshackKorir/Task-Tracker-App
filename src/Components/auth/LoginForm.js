@@ -1,30 +1,23 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-function LoginForm({ onLogin }) {
+function LoginForm() {
+  const { login } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setMessage('');
-    // Get users from localStorage
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    // Check if user exists and password matches
-    const user = users.find(user => user.email === email && user.password === password);
-    if (!user) {
-      setError('Email or password invalid');
-      return;
-    }
-    setMessage('Login successful!');
-    setTimeout(() => {
-      if (onLogin) onLogin();
+    const success = await login(email, password);
+    if (success) {
       navigate('/home');
-    }, 1200); // Wait 1.2 seconds before redirecting
+    } else {
+      setError('Invalid email or password');
+    }
   };
 
   return (
@@ -64,11 +57,6 @@ function LoginForm({ onLogin }) {
       }}>
         Login
       </button>
-      {message && (
-        <div style={{ color: '#388e3c', marginTop: '1rem', fontWeight: 'bold' }}>
-          {message}
-        </div>
-      )}
       {error && (
         <div style={{ color: '#d32f2f', marginTop: '1rem', fontWeight: 'bold' }}>
           {error}
@@ -77,5 +65,17 @@ function LoginForm({ onLogin }) {
     </form>
   );
 }
+
+// export default LoginForm;
+//         </div>
+//       )}
+//       {error && (
+//         <div style={{ color: '#d32f2f', marginTop: '1rem', fontWeight: 'bold' }}>
+//           {error}
+//         </div>
+//       )}
+//     </form>
+//   );
+// }
 
 export default LoginForm;

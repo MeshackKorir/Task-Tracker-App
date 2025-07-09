@@ -31,7 +31,7 @@ function Home() {
           <li><strong>Week 4:</strong> React</li>
         </ol>
       </div>
-      <Link to="/login">
+      <Link to="/tasks">
         <button style={{
           background: 'linear-gradient(90deg, #1976d2 60%, #42a5f5 100%)',
           color: '#fff',
@@ -46,7 +46,6 @@ function Home() {
           Get Started
         </button>
       </Link>
-      {/* You can add more homepage content or features here as needed */}
     </div>
   );
 }

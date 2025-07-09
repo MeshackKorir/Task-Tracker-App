@@ -1,36 +1,29 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 function SignupForm() {
+  const { register } = useContext(AuthContext);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    // Passwords must match
-    if (password !== confirmPassword) {
-      setError('Passwords do not match!');
+    if (password !== confirm) {
+      setError('Passwords do not match');
       return;
     }
-    // Get users from localStorage or empty array
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    // Check if email already exists
-    if (users.find(user => user.email === email)) {
-      setError('Email already registered!');
-      return;
-    }
-    // Add new user
-    users.push({ email, password });
-    localStorage.setItem('users', JSON.stringify(users));
-    setMessage('Good to login');
-    setTimeout(() => {
+    try {
+      await register(name, email, password);
       navigate('/login');
-    }, 1500); // Wait 1.5 seconds before redirecting
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -42,6 +35,14 @@ function SignupForm() {
       minWidth: '300px'
     }}>
       <h2>Signup</h2>
+      <label>Name:</label>
+      <input
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        required
+      />
+
       <label>Email:</label>
       <input
         type="email"
@@ -61,8 +62,8 @@ function SignupForm() {
       <label>Confirm Password:</label>
       <input
         type="password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
+        value={confirm}
+        onChange={(e) => setConfirm(e.target.value)}
         required
       />
 
@@ -78,11 +79,6 @@ function SignupForm() {
       }}>
         Signup
       </button>
-      {message && (
-        <div style={{ color: '#388e3c', marginTop: '1rem', fontWeight: 'bold' }}>
-          {message}
-        </div>
-      )}
       {error && (
         <div style={{ color: '#d32f2f', marginTop: '1rem', fontWeight: 'bold' }}>
           {error}

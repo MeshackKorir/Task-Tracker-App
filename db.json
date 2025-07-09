@@ -1,0 +1,19 @@
+{
+  "users": [
+    {
+      "id": "25e3",
+      "name": "Mk",
+      "email": "mk@gmail.com",
+      "password": "12345"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "20c8",
+      "text": "First",
+      "status": "completed",
+      "dueDate": "2000-02-09",
+      "userId": "25e3"
+    }
+  ]
+}
