@@ -4,7 +4,7 @@ import axios from 'axios';
 
 function TaskManager() {
   const { user } = useContext(AuthContext);
-  const userId = user?.id; 
+  const userId = user?.id;
 
   const [tasks, setTasks] = useState([]);
   const [taskInput, setTaskInput] = useState('');
@@ -128,19 +128,21 @@ function TaskManager() {
         </button>
       </form>
 
-      {/* Pending Tasks */}
-      <h3 style={{ color: '#1976d2', marginTop: '1.5rem' }}>Pending</h3>
+      <h4 style={{ color: '#1976d2', marginTop: '1.5rem' }}>Pending</h4>
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {pendingTasks.length === 0 && <li style={{ color: '#888' }}>No pending tasks.</li>}
         {pendingTasks.map((task, idx) => {
-          // Find the index in the original tasks array
           const realIdx = tasks.findIndex(t => t === task);
           return (
-            <li key={realIdx} style={{
+            <li key={task.id} style={{
               display: 'flex',
-              alignItems: 'center',
-              marginBottom: '0.5rem',
-              gap: '0.5rem'
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              marginBottom: '0.7rem',
+              padding: '0.5rem',
+              border: '1px solid #eee',
+              borderRadius: '4px',
+              fontSize: '0.85rem'
             }}>
               {editIndex === realIdx ? (
                 <>
@@ -149,7 +151,8 @@ function TaskManager() {
                     value={editValue}
                     onChange={e => setEditValue(e.target.value)}
                     style={{
-                      flex: 2,
+                      marginBottom: '0.3rem',
+                      width: '100%',
                       padding: '0.3rem',
                       borderRadius: '4px',
                       border: '1px solid #ccc'
@@ -160,7 +163,8 @@ function TaskManager() {
                     value={editDueDate}
                     onChange={e => setEditDueDate(e.target.value)}
                     style={{
-                      flex: 1,
+                      marginBottom: '0.3rem',
+                      width: '100%',
                       padding: '0.3rem',
                       borderRadius: '4px',
                       border: '1px solid #ccc'
@@ -170,7 +174,8 @@ function TaskManager() {
                     value={editStatus}
                     onChange={e => setEditStatus(e.target.value)}
                     style={{
-                      flex: 1,
+                      marginBottom: '0.3rem',
+                      width: '100%',
                       padding: '0.3rem',
                       borderRadius: '4px',
                       border: '1px solid #ccc'
@@ -191,47 +196,40 @@ function TaskManager() {
                 </>
               ) : (
                 <>
-                  <span style={{ flex: 2 }}>{task.text}</span>
-                  <span style={{
-                    flex: 1,
-                    color: '#1976d2',
-                    fontWeight: 'bold'
-                  }}>
-                    Pending
-                  </span>
-                  <span style={{ flex: 1, fontSize: '0.95em', color: '#888' }}>
-                    {task.dueDate}
-                  </span>
-                  <select
-                    value={task.status}
-                    onChange={e => handleStatusChange(realIdx, e.target.value)}
-                    style={{
-                      flex: 1,
-                      padding: '0.3rem',
+                  <span style={{ marginBottom: '0.3rem' }}>{task.text}</span>
+                  <span style={{ marginBottom: '0.3rem', color: '#1976d2', fontWeight: 'bold' }}>Pending</span>
+                  <span style={{ marginBottom: '0.3rem', color: '#888' }}>{task.dueDate}</span>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                    <select
+                      value={task.status}
+                      onChange={e => handleStatusChange(realIdx, e.target.value)}
+                      style={{
+                        padding: '0.3rem',
+                        borderRadius: '4px',
+                        border: '1px solid #ccc'
+                      }}
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="completed">Completed</option>
+                      <option value="due">Due</option>
+                    </select>
+                    <button onClick={() => handleEditTask(realIdx)} style={{
+                      background: '#1976d2',
+                      color: '#fff',
+                      border: 'none',
                       borderRadius: '4px',
-                      border: '1px solid #ccc'
-                    }}
-                  >
-                    <option value="pending">Pending</option>
-                    <option value="completed">Completed</option>
-                    <option value="due">Due</option>
-                  </select>
-                  <button onClick={() => handleEditTask(realIdx)} style={{
-                    background: '#1976d2',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '4px',
-                    padding: '0.3rem 0.7rem',
-                    cursor: 'pointer'
-                  }}>Edit</button>
-                  <button onClick={() => handleDeleteTask(realIdx)} style={{
-                    background: '#d32f2f',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '4px',
-                    padding: '0.3rem 0.7rem',
-                    cursor: 'pointer'
-                  }}>Delete</button>
+                      padding: '0.3rem 0.7rem',
+                      cursor: 'pointer'
+                    }}>Edit</button>
+                    <button onClick={() => handleDeleteTask(task.id)} style={{
+                      background: '#d32f2f',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '4px',
+                      padding: '0.3rem 0.7rem',
+                      cursor: 'pointer'
+                    }}>Delete</button>
+                  </div>
                 </>
               )}
             </li>
@@ -239,78 +237,62 @@ function TaskManager() {
         })}
       </ul>
 
-      {/* Completed Tasks */}
       <h3 style={{ color: '#388e3c', marginTop: '1.5rem' }}>Completed</h3>
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {completedTasks.length === 0 && <li style={{ color: '#888' }}>No completed tasks.</li>}
-        {completedTasks.map((task, idx) => {
-          const realIdx = tasks.findIndex(t => t === task);
-          return (
-            <li key={realIdx} style={{
-              display: 'flex',
-              alignItems: 'center',
-              marginBottom: '0.5rem',
-              gap: '0.5rem'
-            }}>
-              <span style={{ flex: 2, textDecoration: 'line-through' }}>{task.text}</span>
-              <span style={{
-                flex: 1,
-                color: '#388e3c',
-                fontWeight: 'bold'
-              }}>
-                Completed
-              </span>
-              <span style={{ flex: 1, fontSize: '0.95em', color: '#888' }}>
-                {task.dueDate}
-              </span>
-              <button onClick={() => handleDeleteTask(realIdx)} style={{
-                background: '#d32f2f',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '4px',
-                padding: '0.3rem 0.7rem',
-                cursor: 'pointer'
-              }}>Delete</button>
-            </li>
-          );
-        })}
+        {completedTasks.map((task) => (
+          <li key={task.id} style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            marginBottom: '0.7rem',
+            padding: '0.5rem',
+            border: '1px solid #eee',
+            borderRadius: '4px',
+            fontSize: '0.85rem'
+          }}>
+            <span style={{ marginBottom: '0.3rem', textDecoration: 'line-through' }}>{task.text}</span>
+            <span style={{ marginBottom: '0.3rem', color: '#388e3c', fontWeight: 'bold' }}>Completed</span>
+            <span style={{ marginBottom: '0.3rem', color: '#888' }}>{task.dueDate}</span>
+            <button onClick={() => handleDeleteTask(task.id)} style={{
+              background: '#d32f2f',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '0.3rem 0.7rem',
+              cursor: 'pointer'
+            }}>Delete</button>
+          </li>
+        ))}
       </ul>
 
-      {/* Due Tasks */}
       <h3 style={{ color: '#d32f2f', marginTop: '1.5rem' }}>Due</h3>
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {dueTasks.length === 0 && <li style={{ color: '#888' }}>No due tasks.</li>}
-        {dueTasks.map((task, idx) => {
-          const realIdx = tasks.findIndex(t => t === task);
-          return (
-            <li key={realIdx} style={{
-              display: 'flex',
-              alignItems: 'center',
-              marginBottom: '0.5rem',
-              gap: '0.5rem'
-            }}>
-              <span style={{ flex: 2 }}>{task.text}</span>
-              <span style={{
-                flex: 1,
-                color: '#d32f2f',
-                fontWeight: 'bold'
-              }}>
-                Due
-              </span>
-              <span style={{ flex: 1, fontSize: '0.95em', color: '#888' }}>
-                {task.dueDate}
-              </span>
-              <button onClick={() => handleDeleteTask(realIdx)} style={{
-                background: '#d32f2f',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '4px',
-                padding: '0.3rem 0.7rem',
-                cursor: 'pointer'
-              }}>Delete</button>
-            </li>
-          );
-        })}
+        {dueTasks.map((task) => (
+          <li key={task.id} style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            marginBottom: '0.7rem',
+            padding: '0.5rem',
+            borderRadius: '4px',
+            // border: '1px solid '#eee',
+            fontSize: '0.85rem'
+          }}>
+            <span style={{ marginBottom: '0.3rem' }}>{task.text}</span>
+            <span style={{ marginBottom: '0.3rem', color: '#d32f2f', fontWeight: 'bold' }}>Due</span>
+            <span style={{ marginBottom: '0.3rem', color: '#888' }}>{task.dueDate}</span>
+            <button onClick={() => handleDeleteTask(task.id)} style={{
+              background: '#d32f2f',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '0.3rem 0.7rem',
+              cursor: 'pointer'
+            }}>Delete</button>
+          </li>
+        ))}
       </ul>
     </div>
   );
